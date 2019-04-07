@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
+from __future__ import print_function
+import argparse
 """OpenCV feature detectors with ros CompressedImage Topics in python.
 
 This example subscribes to a ros topic containing sensor_msgs 
@@ -28,12 +30,11 @@ from sensor_msgs.msg import CompressedImage
 # We do not use cv_bridge it does not support CompressedImage in python
 # from cv_bridge import CvBridge, CvBridgeError
 
-VERBOSE=False
-
 class image_feature:
 
-    def __init__(self):
+    def __init__(self, opts):
         '''Initialize ros publisher, ros subscriber'''
+        self.opts = opts
         # topic where we publish
         self.image_pub = rospy.Publisher("/output/image_raw/compressed",
             CompressedImage)
@@ -42,15 +43,18 @@ class image_feature:
         # subscribed Topic
         self.subscriber = rospy.Subscriber("/raspicam_node/image/compressed",
             CompressedImage, self.callback,  queue_size = 1)
-        if VERBOSE :
-            print "subscribed to /raspicam_node/image/compressed"
+        if self.opts.verbose :
+            print("subscribed to /raspicam_node/image/compressed")
+        if self.opts.save_video:
+            fourcc = cv2.VideoWriter_fourcc(*"XVID")
+            self.vid = cv2.VideoWriter('output.avi', fourcc, 5, (1280, 720), True)
 
 
     def callback(self, ros_data):
         '''Callback function of subscribed topic. 
         Here images get converted and features detected'''
-        if VERBOSE :
-            print 'received image of type: "%s"' % ros_data.format
+        if self.opts.verbose :
+            print('received image of type: "%s"' % ros_data.format)
 
         #### direct conversion to CV2 ####
         np_arr = np.fromstring(ros_data.data, np.uint8)
@@ -67,7 +71,7 @@ class image_feature:
         #featPoints = feat_det.detect(
         #    cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY))
         #time2 = time.time()
-        #if VERBOSE :
+        #if self.opts.verbose :
         #    print '%s detector found: %s points in: %s sec.'%(method,
         #        len(featPoints),time2-time1)
 
@@ -77,6 +81,9 @@ class image_feature:
         
         cv2.imshow('cv_img', image_np)
         cv2.waitKey(2)
+
+        if self.opts.save_video:
+            self.vid.write(image_np)
 
         #### Create CompressedIamge ####
         msg = CompressedImage()
@@ -90,13 +97,18 @@ class image_feature:
 
 def main(args):
     '''Initializes and cleanup ros node'''
-    ic = image_feature()
+    ic = image_feature(args)
     rospy.init_node('image_feature', anonymous=True)
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print "Shutting down ROS Image feature detector module"
+        ic.vid.release()
+        print("Shutting down ROS Image feature detector module")
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    main(sys.argv)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', action='store_true')
+    parser.add_argument('--save_video', action='store_true')
+    args = parser.parse_args()
+    main(args)

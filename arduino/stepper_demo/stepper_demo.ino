@@ -5,7 +5,7 @@
 Stepper stepper(STEPS, 8, 9, 10, 11);
 
 void setup() {
-  stepper.setSpeed();
+  stepper.setSpeed(500);
 }
 
 

@@ -1,0 +1,34 @@
+#######################################
+# Syntax Coloring Map For BricktronicsMegashield
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsMegashield	KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+MOTOR_1	KEYWORD2
+MOTOR_2	KEYWORD2
+MOTOR_3	KEYWORD2
+MOTOR_4	KEYWORD2
+MOTOR_5	KEYWORD2
+MOTOR_6	KEYWORD2
+SENSOR_1	KEYWORD2
+SENSOR_2	KEYWORD2
+SENSOR_3	KEYWORD2
+SENSOR_4	KEYWORD2
+SENSOR_5	KEYWORD2
+SENSOR_6	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

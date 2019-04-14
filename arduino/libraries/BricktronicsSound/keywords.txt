@@ -1,0 +1,25 @@
+#######################################
+# Syntax Coloring Map For BricktronicsSound
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsSound	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+value	KEYWORD2
+setMode	KEYWORD2
+getMode	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+SOUND_SENSOR_MODE_DB	LITERAL1
+SOUND_SENSOR_MODE_DBA	LITERAL1
+

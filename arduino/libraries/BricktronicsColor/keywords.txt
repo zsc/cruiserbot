@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map For BricktronicsColor
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsColor	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+getColor	KEYWORD2
+printColor	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

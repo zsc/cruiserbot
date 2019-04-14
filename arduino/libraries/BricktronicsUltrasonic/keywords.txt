@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For BricktronicsUltrasonic
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsUltrasonic	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+getDistance	KEYWORD2
+getProductID	KEYWORD2
+getVersion	KEYWORD2
+getSensorType	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

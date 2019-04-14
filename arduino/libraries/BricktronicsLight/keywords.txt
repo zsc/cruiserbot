@@ -1,0 +1,32 @@
+#######################################
+# Syntax Coloring Map For BricktronicsLight
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsLight	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+value	KEYWORD2
+scaledValue	KEYWORD2
+calibrateLow	KEYWORD2
+calibrateHigh	KEYWORD2
+setCalibrationLowValue	KEYWORD2
+getCalibrationLowValue	KEYWORD2
+setCalibrationHighValue	KEYWORD2
+getCalibrationHighValue	KEYWORD2
+setFloodlight	KEYWORD2
+getFloodlight	KEYWORD2
+setFloodlightAlways	KEYWORD2
+getFloodlightAlways	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

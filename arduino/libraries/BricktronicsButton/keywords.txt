@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map For BricktronicsButton
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+BricktronicsButton	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+isPressed	KEYWORD2
+isReleased	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

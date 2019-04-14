@@ -22,11 +22,11 @@ def callback(data):
 def start():
     # publishing to "turtle1/cmd_vel" to control turtle1
     global pub
-    #pub = rospy.Publisher('turtle1/cmd_vel', Point)
+    pub = rospy.Publisher('turtle1/cmd_vel', Point, queue_size=10)
+    rospy.init_node('Joy2Turtle')
     # subscribed to joystick inputs on topic "joy"
     rospy.Subscriber("joy", Joy, callback)
     # starts the node
-    rospy.init_node('Joy2Turtle')
     rospy.spin()
 
 if __name__ == '__main__':

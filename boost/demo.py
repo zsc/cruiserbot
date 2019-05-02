@@ -193,6 +193,7 @@ if __name__ == '__main__':
     try:
         hub = MoveHub(connection)
         sleep(1)
-        demo_led_colors(hub)
+        demo_color_sensor(hub)
+        # demo_led_colors(hub)
     finally:
         connection.disconnect()

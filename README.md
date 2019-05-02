@@ -1,5 +1,8 @@
 # cruiserbot
 
+## Tensorflow on Raspberry Pi
+Follow instructions here: https://github.com/phopley/rodney-project/wiki/Raspberry-Pi-image#3-install-tensorflow
+
 ## Processing Video stream from Raspberry Pi on PC via ROS
 ### Setup
 #### RPI

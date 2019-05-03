@@ -12,6 +12,12 @@ def get_loader():
         transforms.ToTensor(), 
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
+def get_model():
+    model = models.resnet18(pretrained=True)
+    #model = model_ft.to(device)
+    model.eval()
+    return model
+
 def image_loader(image_name, loader):
     """load image, returns cuda tensor"""
     image = PIL.Image.open(image_name)
@@ -20,12 +26,22 @@ def image_loader(image_name, loader):
     image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
     return image
 
-def show_model_outputs(outputs, top_k=1):
+def show_model_outputs(outputs, top_k=1, lang='cn', idx2label_dic=[None]):
+    if idx2label_dic[0] is None:
+        if lang == 'cn':
+            with open("imagenet1000_chinese.txt") as f:
+                idx2label_dic[0] = {i:r.strip() for i, r in enumerate(f.readlines())}
+        else:
+            with open("imagenet1000_clsidx_to_labels.txt") as f:
+                idx2label_dic[0] = eval(f.read())
+
     values = torch.topk(outputs, top_k)[0].data.numpy()[0]
     indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
+    ret = []
     for i in range(top_k):
         idx = indices[i]
-        print('{} {:.2f}'.format(idx2label[idx], values[i]))
+        ret.append('{} {:.2f}'.format(idx2label_dic[0][idx], values[i]))
+    return '\n'.join(ret)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -33,16 +49,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model_ft = models.resnet18(pretrained=True)
-    model = model_ft.to(device)
-    model.eval()
+    model = get_model()
 
-    if args.lang == 'cn':
-        with open("imagenet1000_chinese.txt") as f:
-            idx2label = {i:r.strip() for i, r in enumerate(f.readlines())}
-    else:
-        with open("imagenet1000_clsidx_to_labels.txt") as f:
-            idx2label = eval(f.read())
 
     loader = get_loader()
     for fname in ['cat.jpg', 'dog.jpg']:
@@ -55,5 +63,5 @@ if __name__ == '__main__':
         old = time.time()
         outputs = model(inputs)
         print('model time: {:.1f}s'.format(time.time() - old))
-        show_model_outputs(outputs, 5)
+        print(show_model_outputs(outputs, top_k=5, lang=args.lang))
 

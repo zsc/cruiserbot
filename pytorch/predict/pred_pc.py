@@ -1,3 +1,4 @@
+import time
 import numpy as np
 import PIL
 import torch
@@ -30,8 +31,12 @@ with open("imagenet1000_clsidx_to_labels.txt") as f:
 for fname in ['cat.jpg', 'dog.jpg']:
     print('-'*30)
     print(fname)
+    old = time.time()
     inputs = image_loader(fname, loader)
     inputs = inputs.to(device)
+    print('load', time.time() - old)
+    old = time.time()
     outputs = model(inputs)
+    print('model', time.time() - old)
     for idx in torch.topk(outputs, 5)[1].data.numpy()[0]:
         print(idx2label[idx])

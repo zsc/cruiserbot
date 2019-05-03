@@ -1,3 +1,4 @@
+import argparse
 import time
 import numpy as np
 import PIL
@@ -13,30 +14,43 @@ def image_loader(image_name, loader):
     image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
     return image
 
-loader = transforms.Compose([
-    transforms.Scale(256), transforms.CenterCrop(224),
-    transforms.ToTensor(), 
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang', default='cn')
+    args = parser.parse_args()
+    loader = transforms.Compose([
+        transforms.Scale(256), transforms.CenterCrop(224),
+        transforms.ToTensor(), 
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-model_ft = models.resnet18(pretrained=True)
-num_ftrs = model_ft.fc.in_features
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model_ft = models.resnet18(pretrained=True)
+    num_ftrs = model_ft.fc.in_features
 
-model = model_ft.to(device)
-model.eval()
+    model = model_ft.to(device)
+    model.eval()
 
-with open("imagenet1000_clsidx_to_labels.txt") as f:
-    idx2label = eval(f.read())
+    if args.lang == 'cn':
+        with open("imagenet1000_chinese.txt") as f:
+            idx2label = {i:r.strip() for i, r in enumerate(f.readlines())}
+    else:
+        with open("imagenet1000_clsidx_to_labels.txt") as f:
+            idx2label = eval(f.read())
 
-for fname in ['cat.jpg', 'dog.jpg']:
-    print('-'*30)
-    print(fname)
-    old = time.time()
-    inputs = image_loader(fname, loader)
-    inputs = inputs.to(device)
-    print('load', time.time() - old)
-    old = time.time()
-    outputs = model(inputs)
-    print('model', time.time() - old)
-    for idx in torch.topk(outputs, 5)[1].data.numpy()[0]:
-        print(idx2label[idx])
+    for fname in ['cat.jpg', 'dog.jpg']:
+        print('-'*30)
+        print(fname)
+        old = time.time()
+        inputs = image_loader(fname, loader)
+        inputs = inputs.to(device)
+        print('load time: {:.1f}s'.format(time.time() - old))
+        old = time.time()
+        outputs = model(inputs)
+        print('model time: {:.1f}s'.format(time.time() - old))
+
+        top_k = 5
+        values = torch.topk(outputs, top_k)[0].data.numpy()[0]
+        indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
+        for i in range(top_k):
+            idx = indices[i]
+            print('{} {:.2f}'.format(idx2label[idx], values[i]))

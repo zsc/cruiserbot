@@ -31,7 +31,9 @@ def pred_image(model, image, loader):
     image = image.unsqueeze(0)
     return model(image)
 
-def main_loop(camera, hub, model, args):
+def main_loop(camera, movehub, model, args):
+    assert isinstance(movehub.port_C, EncodedMotor), movehub.port_C
+    assert isinstance(movehub.port_D, EncodedMotor), movehub.port_D
     loader = get_loader()
     rawCapture = PiRGBArray(camera, size=(640, 480))
     cnt = 0
@@ -43,10 +45,15 @@ def main_loop(camera, hub, model, args):
         if args.save_frame:
             np.save('image{:03d}.npy'.format(cnt), image)
 
-        if args.pred:
+        if True:
+            top_k = 5
             outputs = pred_image(model, PIL.Image.fromarray(image, 'RGB'), loader)
-            pred_str = show_model_outputs(outputs, top_k=3)
+            pred_str = show_model_outputs(outputs, top_k=top_k)
             print(pred_str)
+            indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
+            print(indices)
+            if 751 in indices:
+                movehub.port_C.timed(0.5, 30)
      
         # clear the stream in preparation for the next frame
         rawCapture.truncate(0)
@@ -57,10 +64,9 @@ def main_loop(camera, hub, model, args):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    os.environ['OMP_NUM_THREADS'] = "2"
+    #os.environ['OMP_NUM_THREADS'] = "2"
     parser = argparse.ArgumentParser()
     parser.add_argument('--save_frame', action='store_true')
-    parser.add_argument('--pred', action='store_true')
     parser.add_argument('--count', type=int, default=30)
     args = parser.parse_args()
 

@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
             if args.pred:
                 outputs = pred_image(model, PIL.Image.fromarray(image, 'RGB'), loader)
-                pred_str = show_model_outputs(outputs)
+                pred_str = show_model_outputs(outputs, top_k=3)
                 print(pred_str)
                 #preds_f.write('{}\n'.format(cnt))
                 #preds_f.write(pred_str + '\n')

@@ -1,12 +1,10 @@
 import copy
-import gc
 import argparse
 import time
 import os
 import numpy as np
 from picamera.array import PiRGBArray
 from picamera import PiCamera
-#import cv2
 import PIL
 import torch
 import torchvision
@@ -57,9 +55,6 @@ if __name__ == '__main__':
                 print(pred_str)
                 #preds_f.write('{}\n'.format(cnt))
                 #preds_f.write(pred_str + '\n')
-                #gc.collect()
-            #cv2.imshow("Frame", image)
-            #key = cv2.waitKey(1) & 0xFF
          
             # clear the stream in preparation for the next frame
             rawCapture.truncate(0)

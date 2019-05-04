@@ -1,4 +1,5 @@
 import argparse
+import os
 import time
 import numpy as np
 import PIL
@@ -13,7 +14,8 @@ def get_loader():
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
 def get_model():
-    model = models.squeezenet1_0(pretrained=True)
+    #model = models.squeezenet1_0(pretrained=True)
+    model = models.resnet18(pretrained=True)
     #model = model_ft.to(device)
     model.eval()
     return model
@@ -43,6 +45,7 @@ def show_model_outputs(outputs, top_k=1, lang='cn', idx2label_dic=[None]):
     return '\n'.join(ret)
 
 if __name__ == '__main__':
+    os.environ['OMP_NUM_THREADS'] = "2"
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', default='cn')
     args = parser.parse_args()

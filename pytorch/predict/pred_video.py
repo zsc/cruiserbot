@@ -2,6 +2,7 @@ import copy
 import gc
 import argparse
 import time
+import os
 import numpy as np
 from picamera.array import PiRGBArray
 from picamera import PiCamera
@@ -25,6 +26,7 @@ def pred_image(model, image, loader):
     return model(image)
 
 if __name__ == '__main__':
+    os.environ['OMP_NUM_THREADS'] = "2"
     parser = argparse.ArgumentParser()
     parser.add_argument('--save_frame', action='store_true')
     parser.add_argument('--pred', action='store_true')

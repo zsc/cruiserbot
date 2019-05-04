@@ -21,7 +21,6 @@ def get_camera():
 
 def pred_image(model, image, loader):
     image = loader(image).float()
-    image = torch.autograd.Variable(image, requires_grad=False)
     image = image.unsqueeze(0)
     return model(image)
 

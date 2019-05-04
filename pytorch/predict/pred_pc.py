@@ -22,7 +22,6 @@ def image_loader(image_name, loader):
     """load image, returns cuda tensor"""
     image = PIL.Image.open(image_name)
     image = loader(image).float()
-    image = torch.autograd.Variable(image, requires_grad=False)
     image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
     return image
 

@@ -49,6 +49,7 @@ if __name__ == '__main__':
     os.environ['OMP_NUM_THREADS'] = "2"
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', default='cn')
+    parser.add_argument('--files', type=argparse.FileType('r'), nargs='+', default=['cat.jpg', 'dog.jpg'])
     args = parser.parse_args()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -56,7 +57,7 @@ if __name__ == '__main__':
 
 
     loader = get_loader()
-    for fname in ['cat.jpg', 'dog.jpg']:
+    for fname in args.files:
         print('-'*30)
         print(fname)
         old = time.time()

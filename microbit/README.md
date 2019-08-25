@@ -1,5 +1,7 @@
 ## Control Servo via Serial
-* Makecode https://makecode.microbit.org/_Toi8LLTPjcHc
+* Makecode
+  * controlled: https://makecode.microbit.org/_JsELD6E6qJxP 
+  * controller: https://makecode.microbit.org/_PeYbt0Us9Uvo
 * Jetson Nano: https://github.com/zsc/cruiserbot/blob/master/microbit/jetson_serial.py
 
 ## Motor

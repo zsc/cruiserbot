@@ -12,10 +12,10 @@ try:
         #print('#', end='', flush=True)
         if img is not None:
             avg = img.mean(axis=1).mean(axis=0)
-            if avg[1] > 1.3 * avg[2]:
+            if avg[0] > 1.3 * avg[2]:
                 ser.write(b'2\x0a\x0d')
                 ser_write = 2
-            elif 2 * avg[0] < avg[2]:
+            elif 1.3 * avg[0] < avg[2]:
                 ser.write(b'1\x0a\x0d')
                 ser_write = 1
             else:

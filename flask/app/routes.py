@@ -35,7 +35,7 @@ def get_frame():
 
     try:
         ret, img = cap.read()
-        img = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
+        img = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
     except Exception as e:
         print(e)
         img = np.zeros(40, 40).astype('uint8')

@@ -6,6 +6,15 @@ https://github.com/dusty-nv/jetson-inference/releases
 LD_LIBRARY_PATH=/usr/local/lib imagenet-camera --camera /dev/video0
 ```
 
+## Enable Automatic login
+```
+sudo vi /etc/gdm3/custom.conf
+```
+```
+# AutomaticLoginEnable=true
+# Automatic Login=[user1]
+```
+
 ## GPIO
 https://devtalk.nvidia.com/default/topic/1054876/jetson-nano/i-want-to-control-the-pin-of-the-bcm-code-i-want-to-know-which-gpiochip-is-under-sys-class-gpio-/
 https://www.securipi.co.uk/jetson.pdf

@@ -3,7 +3,7 @@ import os
 import cv2
 import serial
 
-from flask import make_response
+from flask import make_response, render_template, Response
 from app import app
 
 ser = None
@@ -12,6 +12,20 @@ cap = None
 @app.route('/')
 @app.route('/index')
 def index():
+    return render_template('index.html')
+
+def gen():
+    while True:
+        frame = get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+def get_frame():
     global cap
     if cap is None:
         dev = '/dev/video0'
@@ -22,13 +36,11 @@ def index():
     try:
         ret, img = cap.read()
         img = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
-        _, img_encoded = cv2.imencode('.jpg', img)
-        response = make_response(img_encoded.tostring())
-        response.headers.set('Content-Type', 'image/jpeg')
-        return response
     except Exception as e:
         print(e)
-        return "Hi there {}!".format(random.randint(0, 10))
+        img = np.zeros(40, 40).astype('uint8')
+    _, img_encoded = cv2.imencode('.jpg', img)
+    return img_encoded.tostring()
 
 def proc_cmd(cmd):
     ser_write = {'left':2, 'right':1, 'clean':3}[cmd]

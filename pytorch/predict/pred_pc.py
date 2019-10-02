@@ -50,13 +50,16 @@ class ImagePred:
         image = self.image_loader(img)
         return self.model(image)
 
-    def show_model_outputs(self, outputs, top_k=1, lang='cn'):
+    def show_model_outputs(self, outputs, top_k=1, lang='cn', short=False):
         values = torch.topk(outputs, top_k)[0].data.numpy()[0]
         indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
         ret = []
         for i in range(top_k):
             idx = indices[i]
-            ret.append('{} {:.2f}'.format(self.idx2label_dic[idx], values[i]))
+            name = self.idx2label_dic[idx]
+            if short:
+                name = name.split(',')[1]
+            ret.append('{} {:.2f}'.format(name, values[i]))
         return '\n'.join(ret)
 
 if __name__ == '__main__':

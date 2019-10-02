@@ -15,7 +15,8 @@ image_pred = ImagePred()
 @app.route('/index')
 def index():
     frame = get_frame()
-    pred_res = image_pred.show_model_outputs(image_pred.pred(cv2.resize(frame, (224, 224))).cpu())
+    pred_res = image_pred.show_model_outputs(image_pred.pred(cv2.resize(frame, (224, 224))).cpu(), short=True)
+    print(pred_res)
     return render_template('index.html', title=pred_res)
 
 def gen():
@@ -40,7 +41,11 @@ def get_frame():
 
     try:
         ret, img = cap.read()
-        img = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
+        scale = 384 
+        y0 = (img.shape[0] - scale)//2
+        x0 = (img.shape[1] - scale)//2
+        img = img[y0:y0+scale, x0:x0+scale]
+        #img = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
     except Exception as e:
         print(e)
         img = np.zeros(40, 40).astype('uint8')

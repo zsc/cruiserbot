@@ -10,10 +10,17 @@ import torchvision
 from torchvision import datasets, models, transforms
 
 class ImagePred:
-    def __init__(self):
+    def __init__(self, lang='cn'):
         self.loader = self.get_loader()
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model = self.get_model()
+
+        if lang == 'cn':
+            with open("imagenet1000_chinese.txt") as f:
+                self.idx2label_dic = {i:r.strip() for i, r in enumerate(f.readlines())}
+        else:
+            with open("imagenet1000_clsidx_to_labels.txt") as f:
+                self.idx2label_dic = eval(f.read())
 
     def get_loader(self):
         return transforms.Compose([
@@ -43,22 +50,14 @@ class ImagePred:
         image = self.image_loader(img)
         return self.model(image)
 
-def show_model_outputs(outputs, top_k=1, lang='cn', idx2label_dic=[None]):
-    if idx2label_dic[0] is None:
-        if lang == 'cn':
-            with open("imagenet1000_chinese.txt") as f:
-                idx2label_dic[0] = {i:r.strip() for i, r in enumerate(f.readlines())}
-        else:
-            with open("imagenet1000_clsidx_to_labels.txt") as f:
-                idx2label_dic[0] = eval(f.read())
-
-    values = torch.topk(outputs, top_k)[0].data.numpy()[0]
-    indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
-    ret = []
-    for i in range(top_k):
-        idx = indices[i]
-        ret.append('{} {:.2f}'.format(idx2label_dic[0][idx], values[i]))
-    return '\n'.join(ret)
+    def show_model_outputs(self, outputs, top_k=1, lang='cn'):
+        values = torch.topk(outputs, top_k)[0].data.numpy()[0]
+        indices = torch.topk(outputs, top_k)[1].data.numpy()[0]
+        ret = []
+        for i in range(top_k):
+            idx = indices[i]
+            ret.append('{} {:.2f}'.format(self.idx2label_dic[idx], values[i]))
+        return '\n'.join(ret)
 
 if __name__ == '__main__':
     os.environ['OMP_NUM_THREADS'] = "2"
@@ -77,5 +76,5 @@ if __name__ == '__main__':
         old = time.time()
         outputs = image_pred.pred(img)
         print('model time: {:.1f}s'.format(time.time() - old))
-        print(show_model_outputs(outputs.cpu(), top_k=5, lang=args.lang))
+        print(image_pred.show_model_outputs(outputs.cpu(), top_k=5, lang=args.lang))
 

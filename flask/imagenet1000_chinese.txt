@@ -1,0 +1,1 @@
+../pytorch/predict/imagenet1000_chinese.txt

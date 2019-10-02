@@ -5,20 +5,25 @@ import serial
 
 from flask import make_response, render_template, Response
 from app import app
+from .pred_pc import ImagePred
 
 ser = None
 cap = None
+image_pred = ImagePred()
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    frame = get_frame()
+    pred_res = image_pred.show_model_outputs(image_pred.pred(cv2.resize(frame, (224, 224))).cpu())
+    return render_template('index.html', title=pred_res)
 
 def gen():
     while True:
         frame = get_frame()
+        _, img_encoded = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + img_encoded.tostring() + b'\r\n')
 
 @app.route('/video_feed')
 def video_feed():
@@ -39,8 +44,7 @@ def get_frame():
     except Exception as e:
         print(e)
         img = np.zeros(40, 40).astype('uint8')
-    _, img_encoded = cv2.imencode('.jpg', img)
-    return img_encoded.tostring()
+    return img
 
 def proc_cmd(cmd):
     ser_write = {'left':2, 'right':1, 'clean':3}[cmd]

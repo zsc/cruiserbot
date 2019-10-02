@@ -15,7 +15,8 @@ image_pred = ImagePred()
 @app.route('/index')
 def index():
     frame = get_frame()
-    pred_res = image_pred.show_model_outputs(image_pred.pred(cv2.resize(frame, (224, 224))).cpu(), short=True)
+    out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
+    pred_res = image_pred.show_model_outputs(out, top_k=3, short=True)
     print(pred_res)
     return render_template('index.html', title=pred_res)
 
@@ -41,7 +42,7 @@ def get_frame():
 
     try:
         ret, img = cap.read()
-        scale = 384 
+        scale = 300 
         y0 = (img.shape[0] - scale)//2
         x0 = (img.shape[1] - scale)//2
         img = img[y0:y0+scale, x0:x0+scale]

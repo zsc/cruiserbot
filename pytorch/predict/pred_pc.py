@@ -59,7 +59,7 @@ class ImagePred:
             name = self.idx2label_dic[idx]
             if short:
                 name = name.split(',')[1]
-            ret.append('{} {:.2f}'.format(name, values[i]))
+            ret.append('{} {}'.format(name, int(values[i])))
         return '\n'.join(ret)
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ image_pred = ImagePred()
 def index():
     frame = get_frame()
     out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
-    pred_res = image_pred.show_model_outputs(out, top_k=3, short=True)
+    pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
     print(pred_res)
     return render_template('index.html', title=pred_res)
 

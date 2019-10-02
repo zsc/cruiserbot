@@ -4,30 +4,44 @@ import os
 import time
 import numpy as np
 import PIL
+import cv2
 import torch
 import torchvision
 from torchvision import datasets, models, transforms
 
-def get_loader():
-    return transforms.Compose([
-        transforms.Scale(256), transforms.CenterCrop(224),
-        transforms.ToTensor(), 
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+class ImagePred:
+    def __init__(self):
+        self.loader = self.get_loader()
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.model = self.get_model()
 
-def get_model(device):
-    #model = models.squeezenet1_0(pretrained=True)
-    model = models.resnet18(pretrained=True)
-    model.cuda()
-    #model = model.to(device)
-    model.eval()
-    return model
+    def get_loader(self):
+        return transforms.Compose([
+            transforms.Scale(256), transforms.CenterCrop(224),
+            transforms.ToTensor(), 
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
-def image_loader(image_name, loader):
-    """load image, returns cuda tensor"""
-    image = PIL.Image.open(image_name)
-    image = loader(image).float()
-    image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
-    return image
+    def get_model(self):
+        #model = models.squeezenet1_0(pretrained=True)
+        model = models.resnet18(pretrained=True)
+        model.cuda()
+        #model = model.to(self.device)
+        model.eval()
+        return model
+
+    def image_loader(self, img):
+        """load image, returns cuda tensor"""
+        img = img[:,:,::-1]
+        image = PIL.Image.fromarray(img)
+        #image = PIL.Image.open(image_name)
+        image = self.loader(image).float()
+        image = image.unsqueeze(0)  #this is for VGG, may not be needed for ResNet
+        image = image.to(self.device)
+        return image
+
+    def pred(self, img):
+        image = self.image_loader(img)
+        return self.model(image)
 
 def show_model_outputs(outputs, top_k=1, lang='cn', idx2label_dic=[None]):
     if idx2label_dic[0] is None:
@@ -53,20 +67,15 @@ if __name__ == '__main__':
     parser.add_argument('--files', nargs='+', default=['cat.jpg', 'dog.jpg'])
     args = parser.parse_args()
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = get_model(device)
-
-
-    loader = get_loader()
+    image_pred = ImagePred()
     for fname in args.files:
         print('-'*30)
         print(fname)
         old = time.time()
-        inputs = image_loader(fname, loader)
-        inputs = inputs.to(device)
+        img = cv2.imread(fname)
         print('load time: {:.1f}s'.format(time.time() - old))
         old = time.time()
-        outputs = model(inputs)
+        outputs = image_pred.pred(img)
         print('model time: {:.1f}s'.format(time.time() - old))
         print(show_model_outputs(outputs.cpu(), top_k=5, lang=args.lang))
 

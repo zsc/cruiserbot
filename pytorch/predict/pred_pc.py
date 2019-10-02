@@ -14,10 +14,11 @@ def get_loader():
         transforms.ToTensor(), 
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
-def get_model():
+def get_model(device):
     #model = models.squeezenet1_0(pretrained=True)
     model = models.resnet18(pretrained=True)
-    #model = model_ft.to(device)
+    model.cuda()
+    #model = model.to(device)
     model.eval()
     return model
 
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model = get_model()
+    model = get_model(device)
 
 
     loader = get_loader()
@@ -67,5 +68,5 @@ if __name__ == '__main__':
         old = time.time()
         outputs = model(inputs)
         print('model time: {:.1f}s'.format(time.time() - old))
-        print(show_model_outputs(outputs, top_k=5, lang=args.lang))
+        print(show_model_outputs(outputs.cpu(), top_k=5, lang=args.lang))
 

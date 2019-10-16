@@ -13,8 +13,10 @@ image_pred = ImagePred()
 
 @app.route('/')
 @app.route('/index')
-def index():
+def index(cnt=[0]):
     frame = get_frame()
+    cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
+    cnt[0] += 1
     out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
     pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
     print(pred_res)

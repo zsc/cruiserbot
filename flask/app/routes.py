@@ -2,7 +2,10 @@ import random
 import os
 import cv2
 import serial
+import glob
+import numpy as np
 
+from sklearn import neighbors, datasets
 from flask import make_response, render_template, Response
 from app import app
 from .pred_pc import ImagePred
@@ -25,7 +28,7 @@ def load_dir(path='crops', test_ratio=0.3):
                 xs.append(feature); ys.append(label)
     return {'xs':xs, 'ys':ys, 'test_xs':test_xs, 'test_ys':test_ys}
 
-def build_classifier():
+def build_classifier(n_neighbors=3):
     res = load_dir(test_ratio=0)
     xs, ys = res['xs'], res['ys']
     clf = neighbors.KNeighborsClassifier(n_neighbors, weights='distance')
@@ -41,7 +44,7 @@ def index(cnt=[0]):
     cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
     cnt[0] += 1
     out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
-    pred_res = classifier.predict(out)
+    pred_res = classifier.predict(out.detach().numpy())
     #pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
     print(pred_res)
     return render_template('index.html', title='{}'.format(pred_res))

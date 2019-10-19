@@ -13,10 +13,11 @@ from .pred_pc import ImagePred
 ser = None
 cap = None
 image_pred = ImagePred()
+get_words = lambda:['empty', 'nuts', 'pencil', 'tissue', 'plastic']
 
 def load_dir(path='crops', test_ratio=0.3):
     xs = []; ys = []; test_xs = []; test_ys = []
-    for label, tag in enumerate(['empty', 'nuts', 'pencil', 'tissue', 'plastic']):
+    for label, tag in enumerate(get_words()):
         for fname in glob.glob('{}/{}/*.png'.format(path, tag)):
             img = cv2.imread(fname)
             outputs = image_pred.pred(img)
@@ -44,10 +45,10 @@ def index(cnt=[0]):
     cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
     cnt[0] += 1
     out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
-    pred_res = classifier.predict(out.detach().numpy())
+    pred_res = classifier.predict(out.detach().numpy())[0]
     #pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
     print(pred_res)
-    return render_template('index.html', title='{}'.format(pred_res))
+    return render_template('index.html', title='{}'.format(get_words()[pred_res]))
 
 def gen():
     while True:
@@ -82,12 +83,11 @@ def get_frame():
     return img
 
 def proc_cmd(cmd):
-    ser_write = {'left':2, 'right':1, 'clean':3}[cmd]
-
     global ser
     if ser is None:
         ser = serial.Serial('/dev/ttyACM0', 115200)
     try:
+        ser_write = {'left':2, 'right':1, 'clean':3}[cmd]
         if ser_write == 3:
             ser.write(b'3\x0a\x0d')
         elif ser_write == 2:

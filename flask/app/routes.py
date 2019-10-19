@@ -111,3 +111,16 @@ def clean():
     proc_cmd('clean')
     print('clean')
     return ""
+
+@app.route('/auto')
+def set_auto_mode():
+    proc_cmd('auto')
+    print('auto mode')
+    return ""
+
+@app.route('/manual')
+def set_manual_mode():
+    proc_cmd('manual')
+    print('manual mode')
+    return ""
+

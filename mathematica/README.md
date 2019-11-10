@@ -1,5 +1,6 @@
 distance\_matrix: interactive demo for distance matrix visualizations
 
+```
 nPoint = 8; pt = RandomReal[{-1, 1}, {nPoint, 2}]; DynamicModule[{}, 
  GraphicsGrid[{{LocatorPane[Dynamic[pt], 
      Graphics[{Gray, Disk[]}, PlotRange -> 1, 
@@ -14,3 +15,4 @@ nPoint = 8; pt = RandomReal[{-1, 1}, {nPoint, 2}]; DynamicModule[{},
          Length@pt}]], Mesh -> None, InterpolationOrder -> 3, 
       ColorFunction -> ColorData["BlueGreenYellow"], 
       PlotRange -> All]}}, ImageSize -> {1400, 600}]]
+```

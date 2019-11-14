@@ -4,6 +4,10 @@ import cv2
 import serial
 import glob
 import numpy as np
+try:
+   import cPickle as pickle
+except:
+   import pickle
 
 from sklearn import neighbors, datasets
 from flask import make_response, render_template, Response
@@ -30,10 +34,16 @@ def load_dir(path='crops', test_ratio=0.3):
     return {'xs':xs, 'ys':ys, 'test_xs':test_xs, 'test_ys':test_ys}
 
 def build_classifier(n_neighbors=3):
+    pickle_name = 'class.pkl'
+    if os.path.exists(pickle_name):
+        with open(pickle_name, 'rb') as f:
+            return pickle.load(f)
     res = load_dir(test_ratio=0)
     xs, ys = res['xs'], res['ys']
     clf = neighbors.KNeighborsClassifier(n_neighbors, weights='distance')
     clf.fit(xs, ys)
+    with open(pickle_name, 'wb') as f:
+        pickle.dump(clf, f)
     return clf
 
 classifier = build_classifier()

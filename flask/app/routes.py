@@ -47,14 +47,19 @@ def build_classifier(n_neighbors=3):
     return clf
 
 classifier = build_classifier()
+g_image = None
 
 @app.route('/')
 @app.route('/index')
 def index(cnt=[0]):
-    frame = get_frame()
-    cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
+    global g_image
+    if g_image is None:
+        frame = np.zeros((40, 40, 3)).astype('uint8')
+    else:
+        frame = g_image
+    #cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
     cnt[0] += 1
-    out = image_pred.pred(cv2.resize(frame, (224, 224))).cpu()
+    out = image_pred.pred(frame).cpu()
     pred_res = classifier.predict(out.detach().numpy())[0]
     #pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
     print(pred_res)
@@ -63,6 +68,8 @@ def index(cnt=[0]):
 def gen():
     while True:
         frame = get_frame()
+        global g_image
+        g_image = frame
         _, img_encoded = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + img_encoded.tostring() + b'\r\n')
@@ -89,8 +96,8 @@ def get_frame():
         #img = cv2.resize(img, (0, 0), fx=0.4, fy=0.4)
     except Exception as e:
         print(e)
-        img = np.zeros(40, 40).astype('uint8')
-    return img
+        img = np.zeros((40, 40, 3)).astype('uint8')
+    return cv2.resize(img, (224, 224))
 
 def proc_cmd(cmd):
     global ser

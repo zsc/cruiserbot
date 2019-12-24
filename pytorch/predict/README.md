@@ -1,3 +1,6 @@
+# PyTorch on Jetson Nano
+torch-1.1.0-cp36-cp36m-linux_aarch64.whl
+
 # PyTorch on Raspberry Pi
 
 ## Usage

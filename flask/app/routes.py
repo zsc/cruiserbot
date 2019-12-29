@@ -19,7 +19,7 @@ cap = None
 image_pred = ImagePred()
 get_words = lambda:['empty', 'nuts', 'pencil', 'tissue', 'plastic']
 
-def load_dir(path='crops', test_ratio=0.3):
+def load_dir(path='crops2', test_ratio=0.3):
     xs = []; ys = []; test_xs = []; test_ys = []
     for label, tag in enumerate(get_words()):
         for fname in glob.glob('{}/{}/*.png'.format(path, tag)):
@@ -34,7 +34,7 @@ def load_dir(path='crops', test_ratio=0.3):
     return {'xs':xs, 'ys':ys, 'test_xs':test_xs, 'test_ys':test_ys}
 
 def build_classifier(n_neighbors=3):
-    pickle_name = 'class.pkl'
+    pickle_name = 'class2.pkl'
     if os.path.exists(pickle_name):
         with open(pickle_name, 'rb') as f:
             return pickle.load(f)

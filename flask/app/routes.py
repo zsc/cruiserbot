@@ -48,22 +48,28 @@ def build_classifier(n_neighbors=3):
 
 classifier = build_classifier()
 g_image = None
+g_pred_word = 'empty'
 
-@app.route('/')
-@app.route('/index')
-def index(cnt=[0]):
+def refresh_pred(cnt=[0]):
     global g_image
     if g_image is None:
         frame = np.zeros((40, 40, 3)).astype('uint8')
     else:
         frame = g_image
-    #cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
     cnt[0] += 1
+    cv2.imwrite('{:03d}.png'.format(cnt[0]), frame)
     out = image_pred.pred(frame).cpu()
     pred_res = classifier.predict(out.detach().numpy())[0]
+    global g_pred_word
+    g_pred_word = get_words()[pred_res]
     #pred_res = image_pred.show_model_outputs(out, top_k=2, short=True)
-    print(pred_res)
-    return render_template('index.html', title='{}'.format(get_words()[pred_res]))
+    print(g_pred_word)
+    return render_template('index.html', title='{}'.format(g_pred_word))
+
+@app.route('/')
+@app.route('/index')
+def index():
+    return refresh_pred()
 
 def gen():
     while True:
@@ -118,19 +124,19 @@ def proc_cmd(cmd):
 def can_recycle():
     proc_cmd('left')
     print('left, can recycle')
-    return ""
+    return refresh_pred()
 
 @app.route('/cant_recycle')
 def cant_recycle():
     proc_cmd('right')
     print('right, can recycle')
-    return ""
+    return refresh_pred()
 
 @app.route('/clean')
 def clean():
     proc_cmd('clean')
     print('clean')
-    return ""
+    return refresh_pred()
 
 @app.route('/auto')
 def set_auto_mode():
@@ -142,5 +148,11 @@ def set_auto_mode():
 def set_manual_mode():
     proc_cmd('manual')
     print('manual mode')
+    return ""
+
+@app.route('/reboot')
+def reboot():
+    print('reboot')
+    os.system('yes ubuntu|sudo reboot')
     return ""
 

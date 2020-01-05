@@ -26,3 +26,6 @@ export NO_NNPACK=1
 export NO_QNNPACK=1
 export NO_CAFFE2_OPS=1=1
 ```
+
+### Jupyter notebook for buiding up classifier
+https://github.com/zsc/Misc/blob/master/jupyter/nearest_neighbor_classifier.ipynb

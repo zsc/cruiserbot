@@ -1,3 +1,6 @@
+# PyTorch on Jetson Nano
+torch-1.1.0-cp36-cp36m-linux_aarch64.whl
+
 # PyTorch on Raspberry Pi
 
 ## Usage
@@ -23,3 +26,6 @@ export NO_NNPACK=1
 export NO_QNNPACK=1
 export NO_CAFFE2_OPS=1=1
 ```
+
+### Jupyter notebook for buiding up classifier
+https://github.com/zsc/Misc/blob/master/jupyter/nearest_neighbor_classifier.ipynb
